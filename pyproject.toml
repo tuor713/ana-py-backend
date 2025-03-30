@@ -1,0 +1,13 @@
+[project]
+name = "ana-pyworker"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "duckdb>=1.2.1",
+    "fastapi[standard]>=0.115.11",
+    "ollama>=0.4.7",
+    "openai>=1.68.2",
+    "trino>=0.333.0",
+]
