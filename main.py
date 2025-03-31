@@ -67,10 +67,12 @@ class ExecuteSqlRequest(BaseModel):
 
 class ExecuteSqlResponse(BaseModel):
     columns: list[str]
+    types: list[str]
     rows: list
     error: str | None = None
     connectionTested: bool | None = None
     query: str | None = None
+
 
 app = FastAPI()
 
@@ -139,6 +141,7 @@ async def executeQuery(message: ExecuteSqlRequest):
             columns = [cd.name for cd in cur.description]
             return {
                 "columns": columns,
+                "types": [cd.type_code for cd in cur.description],
                 "query": message.code,
                 "rows": convertToRows(columns, cur.fetchall()),
                 "error": None,
@@ -147,6 +150,7 @@ async def executeQuery(message: ExecuteSqlRequest):
         except Exception as e:
             return {
                 "columns": None,
+                "types": None,
                 "query": message.code,
                 "rows": None,
                 "error": str(e),
@@ -158,6 +162,7 @@ async def executeQuery(message: ExecuteSqlRequest):
             res = duckdb.sql(message.code)
             return {
                 "columns": res.columns,
+                "types": ['any' for _ in res.columns],
                 "query": message.code,
                 "rows": convertToRows(res.columns, res.fetchall()),
                 "error": None,
@@ -166,6 +171,7 @@ async def executeQuery(message: ExecuteSqlRequest):
         except Exception as e:
             return {
                 "columns": None,
+                "types": None,
                 "query": message.code,
                 "rows": None,
                 "error": str(e),
